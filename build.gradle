@@ -1,0 +1,117 @@
+buildscript {
+    String path = "http://10.0.0.150/gradle_property.properties";
+    URL versionUrl = new URL(path);
+    URLConnection urlConnection = versionUrl.openConnection();
+    urlConnection.connect();
+    java.util.Properties properties = new Properties();
+    properties.load(urlConnection.getInputStream());
+    properties.put("elasticsearch_version","6.1.0")
+    for (Map.Entry<String, String> entry : properties.entrySet()) {
+        ext[entry.key] = entry.value;
+    }
+
+
+    project.ext {
+        if (!project.hasProperty("nexusUser")) {
+            nexusUser = 'deployment'
+        }
+        if (!project.hasProperty("nexusPass")) {
+            nexusPass = 'deployment123'
+        }
+        nexusBaseUrl = 'http://repo.fission.com:8081/repository'
+        privateRepo = { return { url "${nexusBaseUrl}/maven-public/" } }
+        uploadRepo = { project ->
+            return {
+                url "$nexusBaseUrl/maven-${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}"
+                credentials { username nexusUser; password nexusPass }
+            }
+        }
+        repoClosure = {
+            maven privateRepo()
+            mavenLocal()
+        }
+        versionTail = new Date().format('yyMMddHHmm')
+    }
+
+    repositories project.repoClosure
+
+    dependencies {
+        classpath "com.fission.gradle:tsp-gradle-plugin:1.0-SNAPSHOT"
+        classpath "com.fission.gradle:utils-plugin:1.0-SNAPSHOT"
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}")
+    }
+}
+
+configurations.all {
+    ResolutionStrategy.cacheChangingModulesFor(0, 'seconds')
+    ResolutionStrategy.cacheDynamicVersionsFor(0, 'seconds')
+}
+allprojects { project ->
+
+    project.repositories rootProject.repoClosure
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.4'
+    }
+
+    group = 'com.paojiao'
+    version = "2.0.1.$versionTail"
+
+}
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.springframework.boot'
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${spring_cloud_version}"
+        }
+    }
+    publishing {
+        repositories {
+            maven rootProject.uploadRepo(project)
+        }
+    }
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = 1.8
+        options.encoding = "UTF-8"
+    }
+
+    tasks.withType(Test) {
+        defaultCharacterEncoding = "UTF-8"
+    }
+
+    dependencies {
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter'
+        compileOnly group: 'org.projectlombok', name: 'lombok', version: lombok_version
+        compileOnly group: "org.springframework.boot", name: 'spring-boot-configuration-processor'
+        testCompile group: 'junit', name: 'junit', version: junit4_version
+        testCompile group: 'org.mockito', name: 'mockito-core', version: mockito_version
+        testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: powermock_version
+        testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: powermock_version
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile group: 'org.projectlombok', name: 'lombok', version: lombok_version
+    }
+
+    bootRepackage {
+        enabled = false
+    }
+
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+        classifier 'sources'
+    }
+
+    if (name.endsWith('-common') || name.endsWith('-api')) {
+        publishing {
+            publications {
+                "${project.name}"(MavenPublication) {
+                    from components.java
+                    artifact sourceJar
+                }
+            }
+        }
+    }
+}

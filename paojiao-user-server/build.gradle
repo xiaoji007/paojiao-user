@@ -1,0 +1,21 @@
+dependencies {
+    compile project(':paojiao-user-api')
+    compile group: 'login', name: 'login-api', version: pie_version
+    compile group: "com.fission", name: "fission-full", version: next_version
+    compile group: "com.fission", name: "fission-xxl-job", version: next_version
+    compile group: 'com.fission.next.common.v2', name: 'fission-next-common-web', version: next_version
+    compile group: 'com.fission.next.common.v2', name: 'fission-next-common-transport', version: next_version
+    compile group: "org.springframework.cloud", name: 'spring-cloud-starter-config'
+}
+
+apply plugin: 'com.fission.tsp.release'
+
+tspRelease {
+    tspArtifactId = parent.name
+}
+tspDeploy {
+    location = 'fission-fun-test'
+    args target: 'ts7'
+    args sls_repo: 'paojiao'
+}
+

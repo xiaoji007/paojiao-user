@@ -1,0 +1,4 @@
+rootProject.name = 'paojiao-user'
+include 'paojiao-user-api'
+include 'paojiao-user-server'
+

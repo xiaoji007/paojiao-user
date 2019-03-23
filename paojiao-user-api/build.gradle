@@ -1,0 +1,5 @@
+apply plugin: 'com.fission.utils.gensrc'
+dependencies {
+    compile group: 'com.fission.next.common.v2', name: 'fission-next-common-core', version: next_version
+    compile group: 'com.fission', name: 'fission-motan', version: next_version
+}

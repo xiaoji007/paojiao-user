@@ -1,0 +1,184 @@
+{
+	"settings": {
+		"index": {
+			"number_of_shards": "8",
+			"number_of_replicas": "1",
+			"analysis": {
+				"filter": {
+					"ascii_folding": {
+						"type": "asciifolding",
+						"preserve_original": "true"
+					},
+					"en_stop": {
+						"ignore_case": "true",
+						"type": "stop",
+						"language": "_english_"
+					},
+					"ar_stop": {
+						"ignore_case": "true",
+						"type": "stop",
+						"language": "_arabic_"
+					},
+					"tr_stop": {
+						"ignore_case": "true",
+						"type": "stop",
+						"language": "_turkish_"
+					}
+				},
+				"analyzer": {
+					"content": {
+						"filter": [
+							"lowercase",
+							"asciifolding",
+							"en_stop",
+							"ar_stop",
+							"tr_stop"
+						],
+						"type": "standard"
+					}
+				}
+			}
+		}
+	}
+}
+{
+	"mappings": {
+		"doc": {
+			"properties": {
+                "type": {
+                    "type": "keyword"
+                 },
+                "id": {
+                 "type": "keyword"
+                },
+                "birthday": {
+                    "type": "date"
+                },
+                "loginId": {
+                    "type": "integer"
+                },
+                "hometown": {
+                    "analyzer": "content",
+                    "type": "text"
+                },
+                "presentAddress": {
+                    "analyzer": "content",
+                    "type": "text"
+                },
+                "createTime": {
+                    "type": "date"
+                },
+                "surfing": {
+                    "type": "integer"
+                },
+                "sex": {
+                    "type": "short"
+                },
+                "headPic": {
+                    "index": false,
+                    "type": "text"
+                },
+                "regionId": {
+                    "type": "integer"
+                },
+                "languageType": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "food": {
+                    "type": "integer"
+                },
+                "videointegerroduceUrl": {
+                    "index": false,
+                    "type": "text"
+                },
+                "professional": {
+                    "analyzer": "content",
+                    "type": "text"
+                },
+                "objective": {
+                    "type": "short"
+                },
+                "audiointegerroduceUrl": {
+                    "index": false,
+                    "type": "text"
+                },
+                "userDesc": {
+                    "analyzer": "content",
+                    "type": "text"
+                },
+                "userType": {
+                    "type": "short"
+                },
+                "relationshipStatus": {
+                    "type": "short"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "school": {
+                    "analyzer": "content",
+                    "type": "text"
+                },
+                "nickName": {
+                    "analyzer": "content",
+                    "type": "text"
+                },
+                "gis": {
+                    "type": "geo_point"
+                },
+                "start": {
+                    "type": "boolean"
+                },
+                "expireTime": {
+                    "type": "date"
+                },
+                "updateTime": {
+                    "type": "date"
+                },
+
+                "shareType": {
+                    "type": "integer"
+                },
+                "inviteType": {
+                    "type": "short"
+                },
+                "state": {
+                    "type": "short"
+                },
+                "inviteCode": {
+                    "type": "keyword"
+                },
+                "inviteUserId": {
+                    "type": "integer"
+                },
+                "inviteState": {
+                    "type": "short"
+                },
+                "invite":{
+                    "type":"boolean"
+                },
+                "religion": {
+                    "type": "integer"
+                },
+                "online": {
+                    "type": "boolean"
+                },
+                "lastLoginTime": {
+                    "type": "date"
+                },
+                "tags": {
+                    "type": "integer"
+                },
+                "integrity": {
+                    "type": "integer"
+                }
+		    }
+	    }
+    }
+}
