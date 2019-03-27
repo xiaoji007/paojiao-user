@@ -32,11 +32,9 @@ public class ApplicationConfig {
     private String userPicMap;
     private String picSuffix;
     private int picLength;
-
-
-    private boolean verify;
-
+    private int picNum;
     private boolean userPicVerify;
+    private boolean verify;
 
 
     public boolean isPicSuffix(String fileSuffix) {

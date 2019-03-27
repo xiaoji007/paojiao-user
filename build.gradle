@@ -42,10 +42,10 @@ buildscript {
     }
 }
 
-configurations.all {
-    ResolutionStrategy.cacheChangingModulesFor(0, 'seconds')
-    ResolutionStrategy.cacheDynamicVersionsFor(0, 'seconds')
-}
+//configurations.all {
+//    ResolutionStrategy.cacheChangingModulesFor(0, 'seconds')
+//    ResolutionStrategy.cacheDynamicVersionsFor(0, 'seconds')
+//}
 allprojects { project ->
 
     project.repositories rootProject.repoClosure

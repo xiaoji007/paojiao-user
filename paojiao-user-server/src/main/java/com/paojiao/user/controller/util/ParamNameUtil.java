@@ -14,6 +14,7 @@ public class ParamNameUtil {
 
 	public static final String USER_PIC = "user_pic";
 	public static final String USER_PIC_INDEX = "user_pic_index";
+	public static final String USER_PIC_TO_INDEX = "user_pic_to_index";
 	public static final String USER_PIC_ID = "user_pic_id";
 }
 

@@ -210,6 +210,33 @@ public class UserController {
         }
     }
 
+    /**
+     * 更新首页图片
+     *
+     * @param index   文件位置
+     * @param toIndex 文件位置
+     */
+    @RequestMapping("/pic/move")
+    public ResultUtil<Void> moveUserPic(ClientContext clientContext,
+                                        @RequestParam(value = ParamNameUtil.USER_PIC_INDEX, defaultValue = "0") int index,
+                                        @RequestParam(value = ParamNameUtil.USER_PIC_TO_INDEX, defaultValue = "0") int toIndex) {
+        ResultUtil<Void> resultUtil = new ResultUtil<>();
+        try {
+            int selfUserId = clientContext.getUserId();
+            int length = this.applicationConfig.getPicNum();
+            if (index > length || index < 1 || toIndex > length || toIndex < -1) {
+                resultUtil.setCode(ErrorCode.PARAM_ERROR);
+                return resultUtil;
+            }
+            ResultUtil<Void> resultUtil2 = this.userPicHandler.moveUserPic(selfUserId, index, toIndex, clientContext);
+            resultUtil.setCode(resultUtil2.getCode());
+        } catch (Exception e) {
+            resultUtil.setCode(UserErrorCode.USER_ERROR);
+            String message = String.format("moveUserPic error.param(index:%s,toIndex:%s,context:%s)", index, toIndex, JsonUtil.objToJsonString(clientContext));
+            UserController.LOGGER.error(message, e);
+        }
+        return resultUtil;
+    }
 
     /**
      * 获取邀请连接
@@ -246,14 +273,19 @@ public class UserController {
      * 初始化用户属性
      *
      * @param clientContext 客服端上下文
+     * @param inviteCode    邀请码
      * @param userAttr      用户属性Json 字符串
      */
 
     @Timed(name = "http.user.init_attr", absolute = true)
     @RequestMapping("init_attr")
     @Login
-    public ResultUtil<Object> initUserAttr(ClientContext clientContext, @RequestParam(ParamNameUtil.USER_ATTR) String userAttr) {
-        return this.updateUserAttr(clientContext, userAttr, true);
+    public ResultUtil<Object> initUserAttr(ClientContext clientContext, @RequestParam(required = false, value = ParamNameUtil.INVITE_CODE) String inviteCode, @RequestParam(ParamNameUtil.USER_ATTR) String userAttr) {
+        ResultUtil<Object> resultUtil = this.updateUserAttr(clientContext, userAttr, true);
+        if (ErrorCode.SUCCESS == resultUtil.getCode()) {
+            return this.getSelfUserInfo(inviteCode, clientContext);
+        }
+        return resultUtil;
     }
 
     /**

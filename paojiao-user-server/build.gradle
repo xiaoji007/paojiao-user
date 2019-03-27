@@ -18,4 +18,3 @@ tspDeploy {
     args target: 'ts7'
     args sls_repo: 'paojiao'
 }
-
