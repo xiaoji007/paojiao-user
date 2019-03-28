@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Named("rpc_UserPicServiceImpl")
@@ -118,5 +116,25 @@ public class UserPicServiceImpl implements IUserPicService {
             resultUtil.setCode(UserErrorCode.USER_ERROR);
         }
         return resultUtil;
+    }
+
+    @Override
+    public ResultUtil<Map<Integer, List<UserPicInfoBean>>> listUsersAllPicInfo(List<Integer> userIds, ClientContext clientContext) {
+        if (ArrayUtils.isNotEmpty(userIds)) {
+            return ResultUtil.build(ErrorCode.PARAM_ERROR);
+        }
+        Map<Integer, List<UserPicInfoBean>> map = new HashMap<>();
+        userIds.parallelStream().forEach((Integer userId) -> {
+            if (null != userId) {
+                ResultUtil<List<UserPicInfoBean>> resultUtil = this.listUserAllPicInfo(userId, clientContext);
+                if (ErrorCode.SUCCESS == resultUtil.getCode()) {
+                    synchronized (map) {
+                        map.put(userId, resultUtil.getDataInfo());
+                    }
+                }
+
+            }
+        });
+        return ResultUtil.build(ErrorCode.SUCCESS, map);
     }
 }

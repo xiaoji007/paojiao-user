@@ -4,7 +4,7 @@ dependencies {
     compile group: "com.fission", name: "fission-full", version: next_version
     compile group: "com.fission", name: "fission-xxl-job", version: next_version
     compile group: 'com.fission.next.common.v2', name: 'fission-next-common-web', version: next_version
-    compile group: 'com.fission.next.common.v2', name: 'fission-next-common-transport', version: next_version
+    compile group: 'message', name: 'message-api', version: next_version
     compile group: "org.springframework.cloud", name: 'spring-cloud-starter-config'
 }
 

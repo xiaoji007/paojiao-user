@@ -4,13 +4,12 @@ import com.fission.next.common.bean.ClientContext;
 import com.fission.next.common.constant.RouteEventNames;
 import com.fission.next.common.constant.RouteFieldNames;
 import com.fission.next.common.error.FissionException;
-import com.fission.next.common.transport.bean.TokenResult;
-import com.fission.next.common.transport.service.TokenService;
 import com.fission.next.utils.ErrorCode;
 import com.fission.utils.bean.ResultUtil;
 import com.fission.utils.tool.ArrayUtils;
 import com.fission.utils.tool.JsonUtil;
 import com.fission.utils.tool.StringUtil;
+import com.message.api.service.ITokenService;
 import com.paojiao.user.api.bean.UserInfoBean;
 import com.paojiao.user.api.bean.UserInviteCodeBean;
 import com.paojiao.user.api.services.IUserService;
@@ -47,7 +46,7 @@ public class UserServiceImpl implements IUserService {
     @Inject
     private RabbitTemplate rabbit;
     @Inject
-    private TokenService tokenService;
+    private ITokenService tokenService;
     @Inject
     private IUserCacheService userCacheService;
 
@@ -67,16 +66,11 @@ public class UserServiceImpl implements IUserService {
                 resultUtil.setCode(UserErrorCode.USER_NO_EXISTS_ERROR);
                 return resultUtil;
             }
-            TokenResult userGetTokenResult = tokenService.getToken(userInfo.getUserId(), userInfo.getNickName(), userInfo.getHeadPic());
-            if (userGetTokenResult.getCode() != 200) {
-                throw new FissionException("getToken fail.userId:" + userInfo.getUserId() + ",code" + userGetTokenResult.getCode() + ",message:" + userGetTokenResult.getErrorMessage());
+            ResultUtil<String> tokenBeanResultUtil = tokenService.initToken(userInfo.getUserId(), userInfo.getNickName(), userInfo.getHeadPic(), clientContext);
+            if (null == tokenBeanResultUtil || ErrorCode.SUCCESS != tokenBeanResultUtil.getCode() || StringUtil.isBlank(tokenBeanResultUtil.getDataInfo())) {
+                throw new FissionException("getToken fail.ResultUtil:" + JsonUtil.objToJsonString(tokenBeanResultUtil));
             }
-            String token = userGetTokenResult.getToken();
-            if (StringUtil.isBlank(token)) {
-                resultUtil.setCode(UserErrorCode.USER_ERROR);
-                return resultUtil;
-            }
-            resultUtil.setDataInfo(token);
+            resultUtil.setDataInfo(tokenBeanResultUtil.getDataInfo());
             resultUtil.setCode(ErrorCode.SUCCESS);
         } catch (Exception e) {
             String message = String.format("getUserToken error.param(userId:%s,context:%s)", userId, JsonUtil.objToJsonString(clientContext));

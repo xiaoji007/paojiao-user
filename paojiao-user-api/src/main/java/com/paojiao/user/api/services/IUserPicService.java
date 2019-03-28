@@ -8,6 +8,7 @@ import com.paojiao.user.api.bean.UserPicInfoBean;
 import com.weibo.api.motan.transport.async.MotanAsync;
 
 import java.util.List;
+import java.util.Map;
 
 @MotanAsync
 @Rpc(ServiceName.PAOJIAO_USER)
@@ -53,4 +54,13 @@ public interface IUserPicService {
      * @return
      */
     ResultUtil<List<UserPicInfoBean>> listUserAllPicInfo(int userId, ClientContext clientContext);
+
+    /**
+     * 获取用户首页所有图片
+     *
+     * @param userIds        用户id
+     * @param clientContext 客户端信息
+     * @return
+     */
+    ResultUtil<Map<Integer,List<UserPicInfoBean>>> listUsersAllPicInfo(List<Integer> userIds, ClientContext clientContext);
 }
