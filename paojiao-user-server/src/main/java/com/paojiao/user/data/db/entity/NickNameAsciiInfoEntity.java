@@ -1,10 +1,11 @@
-package com.paojiao.user.data.db.entity;
-import com.fission.datasource.annotation.ColumnAnnotation;
-import com.fission.datasource.annotation.TableAnnotation;
-import com.fission.datasource.bean.BaseEntity;
+package com.paojiao.user.data.db.entity ;
+import com.fission.datasource.annotation.ColumnAnnotation ;
+import com.fission.datasource.annotation.TableAnnotation ;
+import lombok.Data ;
 
 @TableAnnotation(dbName="paojiao_user",tableName="nick_name_ascii_info")
-public class NickNameAsciiInfoEntity implements BaseEntity {
+@Data
+public class NickNameAsciiInfoEntity implements com.fission.datasource.bean.BaseEntity {
 
 
 	private transient static final long serialVersionUID = 1L;
@@ -19,59 +20,19 @@ public class NickNameAsciiInfoEntity implements BaseEntity {
 
 	public transient static final String ASCII_ID = "ascii_id";
 
-	@ColumnAnnotation(length=10,columnName="end_ascii")
+	@ColumnAnnotation(length=10,columnName=NickNameAsciiInfoEntity.END_ASCII)
 	private int endAscii;
 
-	@ColumnAnnotation(length=19,columnName="create_time")
+	@ColumnAnnotation(length=19,columnName=NickNameAsciiInfoEntity.CREATE_TIME)
 	private java.sql.Timestamp createTime;
 
-	@ColumnAnnotation(length=10,columnName="start_ascii")
+	@ColumnAnnotation(length=10,columnName=NickNameAsciiInfoEntity.START_ASCII)
 	private int startAscii;
 
-	@ColumnAnnotation(length=5,columnName="ascii_type")
+	@ColumnAnnotation(length=5,columnName=NickNameAsciiInfoEntity.ASCII_TYPE)
 	private short asciiType;
 
-	@ColumnAnnotation(isKey=true,length=10,isAuto=true,columnName="ascii_id")
+	@ColumnAnnotation(isKey=true,length=10,isAuto=true,columnName=NickNameAsciiInfoEntity.ASCII_ID)
 	private int asciiId;
-
-	public void setEndAscii(int endAscii){
-	  this.endAscii = endAscii;
-	}
-
-	public int getEndAscii(){
-	  return this.endAscii;
-	}
-
-	public void setCreateTime(java.sql.Timestamp createTime){
-	  this.createTime = createTime;
-	}
-
-	public java.sql.Timestamp getCreateTime(){
-	  return this.createTime;
-	}
-
-	public void setStartAscii(int startAscii){
-	  this.startAscii = startAscii;
-	}
-
-	public int getStartAscii(){
-	  return this.startAscii;
-	}
-
-	public void setAsciiType(short asciiType){
-	  this.asciiType = asciiType;
-	}
-
-	public short getAsciiType(){
-	  return this.asciiType;
-	}
-
-	public void setAsciiId(int asciiId){
-	  this.asciiId = asciiId;
-	}
-
-	public int getAsciiId(){
-	  return this.asciiId;
-	}
 
 }

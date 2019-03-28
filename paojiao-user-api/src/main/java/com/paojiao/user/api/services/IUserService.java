@@ -6,7 +6,6 @@ import com.fission.next.common.constant.ServiceName;
 import com.fission.utils.bean.ResultUtil;
 import com.paojiao.user.api.bean.UserInfoBean;
 import com.paojiao.user.api.bean.UserInviteCodeBean;
-import com.paojiao.user.api.bean.UserPicInfoBean;
 import com.weibo.api.motan.transport.async.MotanAsync;
 
 import java.util.Date;
@@ -85,16 +84,6 @@ public interface IUserService {
      */
     ResultUtil<Integer> getUserId(short userType, int loginId, ClientContext clientContext);
 
-
-    /**
-     * 获取用户的最后登录时间
-     *
-     * @param userIds
-     * @param clientContext
-     * @return
-     */
-    ResultUtil<Map<Integer, Date>> listUserLastActiveTime(List<Integer> userIds, ClientContext clientContext);
-
     /**
      * 设置用户在线状态，普通用户调用
      *
@@ -104,8 +93,6 @@ public interface IUserService {
      * @return
      */
     ResultUtil<Void> setUserOnlineStatus(int userId, boolean online, ClientContext clientContext);
-
-    ResultUtil<Void> setUserActive(int userId, ClientContext clientDefault);
 
     /**
      * 批量设置用户在线状态，陪聊账号调用

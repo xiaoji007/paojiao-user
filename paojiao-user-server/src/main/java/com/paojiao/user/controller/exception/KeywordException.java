@@ -1,11 +1,13 @@
 package com.paojiao.user.controller.exception;
 
-public class NickNameAsciiException extends UpdateUserAttrException {
+import com.fission.next.common.error.FissionCodeException;
+
+public class KeywordException extends FissionCodeException {
 	private static final long serialVersionUID = -649938400223269422L;
 	private String keyworld;
 
-	public NickNameAsciiException(String message) {
-		super();
+	public KeywordException(String message, int code) {
+		super(code);
 		this.keyworld = keyworld;
 	}
 

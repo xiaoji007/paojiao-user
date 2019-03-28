@@ -5,7 +5,7 @@ import com.fission.task.bean.TaskBaseBean;
 import com.fission.task.util.DataAdapterUtil;
 import com.fission.task.util.TaskDataUtil;
 import com.fission.utils.tool.JsonUtil;
-import com.paojiao.user.data.mongo.entity.UserPicLogInfoEntity;
+import com.paojiao.user.data.mongo.entity.MGUserPicLogInfoEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserMongoTaskService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserMongoTaskService.class);
+public class MGTaskService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MGTaskService.class);
 
     @Scheduled(cron = "0/2 * * * * ?")
     private void userPicLogAdapterTask() {
-        this.execute(UserPicLogInfoEntity.class);
+        this.execute(MGUserPicLogInfoEntity.class);
     }
 
     private <T extends TaskBaseBean> void execute(Class<T> clazz) {
@@ -45,7 +45,7 @@ public class UserMongoTaskService {
                 try {
                     adapter.execute(list);
                 } catch (Throwable e) {
-                    UserMongoTaskService.LOGGER.error("adapter forEach error.param(list:" + JsonUtil.objToJsonString(list) + ")", e);
+                    MGTaskService.LOGGER.error("adapter forEach error.param(list:" + JsonUtil.objToJsonString(list) + ")", e);
                 }
             }
         });

@@ -1,10 +1,11 @@
-package com.paojiao.user.data.db.entity;
-import com.fission.datasource.annotation.ColumnAnnotation;
-import com.fission.datasource.annotation.TableAnnotation;
-import com.fission.datasource.bean.BaseEntity;
+package com.paojiao.user.data.db.entity ;
+import com.fission.datasource.annotation.ColumnAnnotation ;
+import com.fission.datasource.annotation.TableAnnotation ;
+import lombok.Data ;
 
-@TableAnnotation(dbName="fission_next_user",tableName="surfing_info")
-public class SurfingInfoEntity implements BaseEntity {
+@TableAnnotation(dbName="paojiao_user",tableName="surfing_info")
+@Data
+public class SurfingInfoEntity implements com.fission.datasource.bean.BaseEntity {
 
 
 	private transient static final long serialVersionUID = 1L;
@@ -13,26 +14,10 @@ public class SurfingInfoEntity implements BaseEntity {
 
 	public transient static final String SURFING = "surfing";
 
-	@ColumnAnnotation(length=19,columnName="create_time")
+	@ColumnAnnotation(length=19,columnName=SurfingInfoEntity.CREATE_TIME)
 	private java.sql.Timestamp createTime;
 
-	@ColumnAnnotation(isKey=true,length=10,isAuto=true,columnName="surfing")
+	@ColumnAnnotation(isKey=true,length=10,isAuto=true,columnName=SurfingInfoEntity.SURFING)
 	private int surfing;
-
-	public void setCreateTime(java.sql.Timestamp createTime){
-	  this.createTime = createTime;
-	}
-
-	public java.sql.Timestamp getCreateTime(){
-	  return this.createTime;
-	}
-
-	public void setSurfing(int surfing){
-	  this.surfing = surfing;
-	}
-
-	public int getSurfing(){
-	  return this.surfing;
-	}
 
 }

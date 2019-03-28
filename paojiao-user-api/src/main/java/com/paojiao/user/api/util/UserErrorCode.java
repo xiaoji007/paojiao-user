@@ -110,6 +110,20 @@ public class UserErrorCode {
 	public static final int DESC_KEYWORD_ERROR = ErrorCode.USER_SERVER_ERROR + 18;
 
 	/**
+	 * 用户介绍太长
+	 */
+	@ErrorAnnotation("用户介绍太长")
+	public static final int DESC_LENGTH_ERROR = ErrorCode.USER_SERVER_ERROR + 18;
+
+	/**
+	 *  饮食习惯
+	 */
+	@ErrorAnnotation(" 饮食习惯错误")
+	public static final int FOOD_HABIT_ERROR = ErrorCode.USER_SERVER_ERROR + 18;
+
+
+
+	/**
 	 * 用户介绍包含关键字
 	 */
 	@ErrorAnnotation("上传失败")

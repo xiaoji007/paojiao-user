@@ -3,7 +3,7 @@ package com.paojiao.user.event;
 import com.fission.next.common.constant.RouteEventNames;
 import com.fission.rabbit.spring.RabbitEvent;
 import com.paojiao.user.controller.attr.init.UpdateUserNickName;
-import com.paojiao.user.service.IKeyworldService;
+import com.paojiao.user.service.IKeywordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class UserEvent {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserEvent.class);
 
     @Inject
-    private IKeyworldService keyworldService;
+    private IKeywordService keyworldService;
 
     @Inject
     private UpdateUserNickName updateUserNickName;

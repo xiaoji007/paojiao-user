@@ -28,7 +28,7 @@ public class OnlineUserJob extends IJobHandler {
         if (null == userIds || userIds.isEmpty()) {
             return ReturnT.SUCCESS;
         }
-        userIds.stream().forEach((Integer userId) -> {
+        userIds.parallelStream().forEach((Integer userId) -> {
             if (null == userId) {
                 return;
             }

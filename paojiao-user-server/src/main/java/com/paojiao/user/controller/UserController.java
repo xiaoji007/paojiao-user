@@ -7,6 +7,7 @@ import com.fission.next.common.bean.ClientContext;
 import com.fission.next.common.constant.RouteEventNames;
 import com.fission.next.common.constant.RouteFieldNames;
 import com.fission.next.common.constant.ServiceName;
+import com.fission.next.common.error.FissionCodeException;
 import com.fission.next.common.error.FissionException;
 import com.fission.next.utils.ErrorCode;
 import com.fission.next.utils.LoginUtil;
@@ -23,7 +24,7 @@ import com.paojiao.user.api.util.UserErrorCode;
 import com.paojiao.user.config.ApplicationConfig;
 import com.paojiao.user.controller.attr.UpdateUserService;
 import com.paojiao.user.controller.bean.UserInfoBean;
-import com.paojiao.user.controller.exception.SexException;
+import com.paojiao.user.controller.exception.KeywordException;
 import com.paojiao.user.controller.util.ParamNameUtil;
 import com.paojiao.user.service.IUserCacheService;
 import com.paojiao.user.task.UserTaskService;
@@ -108,6 +109,19 @@ public class UserController {
             return ResultUtil.build(ErrorCode.PARAM_ERROR);
         }
         return ResultUtil.build(ErrorCode.SUCCESS, userCacheService.getOnlineUsers(userIds));
+    }
+
+    /**
+     * 保持在线
+     *
+     * @param clientContext
+     * @return
+     */
+    @Timed(name = "http.user.online.keep", absolute = true)
+    @RequestMapping("/keep")
+    public ResultUtil<Void> keep(ClientContext clientContext) {
+        this.userHandler.setUserOnlineStatus(clientContext.getUserId(), true, clientContext);
+        return ResultUtil.build(ErrorCode.SUCCESS);
     }
 
 
@@ -431,28 +445,12 @@ public class UserController {
                 com.paojiao.user.api.bean.UserInfoBean dataInfo = this.userHandler.getSelfInfo(selfUserId, clientContext).getDataInfo();
                 resultUtil.setDataInfo(dataInfo.getIntegrity());
             }
-        } catch (SexException e) {
-            resultUtil.setCode(UserErrorCode.SEX_ERROR);
-        } /*catch (NickNameException e) {
-            resultUtil.setCode(UserErrorCode.NICK_NAME_ERROR);
-        } catch (NickNameNullException e) {
-            resultUtil.setCode(UserErrorCode.NICK_NAME_NULL_ERROR);
-        } catch (NickNameLengthException e) {
-            resultUtil.setCode(UserErrorCode.NICK_NAME_LENGTH_ERROR);
-        } catch (NickNameAsciiException e) {
+        } catch (KeywordException e) {
             resultUtil.setDataInfo(e.getKeyworld());
-            resultUtil.setCode(UserErrorCode.NICK_NAME_ASCII_ERROR);
-        } catch (NickNameKeywordException e) {
-            resultUtil.setDataInfo(e.getKeyworld());
-            resultUtil.setCode(UserErrorCode.NICK_NAME_KEYWORD_ERROR);
-        } catch (HeadPicException e) {
-            resultUtil.setCode(UserErrorCode.HEAD_PIC_ERROR);
-        } catch (DescKeywordException e) {
-            resultUtil.setDataInfo(e.getKeyworld());
-            resultUtil.setCode(UserErrorCode.DESC_KEYWORD_ERROR);
-        } catch (BirthdayException e) {
-            resultUtil.setCode(UserErrorCode.BIRTHDAY_ERROR);
-        } */ catch (Exception e) {
+            resultUtil.setCode(e.getCode());
+        } catch (FissionCodeException e) {
+            resultUtil.setCode(e.getCode());
+        } catch (Exception e) {
             String message;
             if (init) {
                 message = String.format("initUserAttr error.param(userAttr:%s,context:%s)", JsonUtil.objToJsonString(userAttr), JsonUtil.objToJsonString(clientContext));

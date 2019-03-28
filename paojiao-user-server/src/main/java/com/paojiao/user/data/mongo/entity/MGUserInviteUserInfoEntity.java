@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@Document(collection = UserInviteUserInfoEntity.TABLE_NAME)
-public class UserInviteUserInfoEntity implements Serializable {
+@Document(collection = MGUserInviteUserInfoEntity.TABLE_NAME)
+public class MGUserInviteUserInfoEntity implements Serializable {
 
     public transient static final String ID = "id";
     public transient static final String TABLE_NAME = "user_invite_user_info";

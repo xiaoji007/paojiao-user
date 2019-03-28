@@ -13,6 +13,10 @@ public interface IUserReadDao {
 
 	List<UserAttrInfoEntity> listUserAttrInfo(int userId) throws SQLException;
 
+	UserInfoEntity getSelfUserInfo(int userId) throws SQLException;
+
+	List<UserAttrInfoEntity> listSelfUserAttrInfo(int userId) throws SQLException;
+
 	UserInviteInfoEntity getInviteUser(String inviteCode) throws SQLException;
 }
 

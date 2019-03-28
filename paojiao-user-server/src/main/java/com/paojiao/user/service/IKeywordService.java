@@ -5,7 +5,7 @@ import com.paojiao.user.service.bean.NickNameKeyworldInfo;
 
 import java.util.List;
 
-public interface IKeyworldService {
+public interface IKeywordService {
 
 	List<NickNameKeyworldInfo> listAllNickNameKeyworldInfo();
 

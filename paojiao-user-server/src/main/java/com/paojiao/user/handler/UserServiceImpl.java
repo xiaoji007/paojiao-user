@@ -19,17 +19,21 @@ import com.paojiao.user.api.util.UserErrorCode;
 import com.paojiao.user.config.ApplicationConfig;
 import com.paojiao.user.service.IUserCacheService;
 import com.paojiao.user.service.IUserPicService;
-import com.paojiao.user.service.bean.UserActiveInfoBean;
 import com.paojiao.user.service.bean.UserInfo;
 import com.paojiao.user.service.bean.UserPicInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +56,10 @@ public class UserServiceImpl implements IUserService {
 
     @Inject
     private IUserPicService userPicService;
+
+    @Inject
+    @Named(com.paojiao.user.util.ConstUtil.NameUtil.REDIS_USER)
+    private RedisTemplate redis;
 
     @Override
     public ResultUtil<String> getUserToken(int userId, ClientContext clientContext) {
@@ -138,14 +146,13 @@ public class UserServiceImpl implements IUserService {
             return new ArrayList<>();
         }
         List<Integer> userIds = userInfos.stream().filter(t -> t != null).map(UserInfo::getUserId).collect(Collectors.toList());
-        Map<Integer, UserActiveInfoBean> userActiveInfoBeanMap = this.userCacheService.batchUserActive(userIds);
         List<Integer> onlineUsers = this.userCacheService.getOnlineUsers(userIds);
         return userInfos.stream().filter(t -> t != null).map(userInfo ->
-                initUserInfoBean(userInfo, userActiveInfoBeanMap.get(userInfo.getUserId()), onlineUsers.contains(userInfo.getUserId()), false)
+                initUserInfoBean(userInfo, onlineUsers.contains(userInfo.getUserId()), false)
         ).collect(Collectors.toList());
     }
 
-    private UserInfoBean initUserInfoBean(UserInfo userInfo, UserActiveInfoBean userActiveInfoBean, boolean isOnline, boolean resetIntegrity) {
+    private UserInfoBean initUserInfoBean(UserInfo userInfo, boolean isOnline, boolean resetIntegrity) {
         UserInfoBean userInfoBean = new UserInfoBean();
         userInfoBean.setUserId(userInfo.getUserId());
         userInfoBean.setSurfing(userInfo.getSurfing());
@@ -192,12 +199,7 @@ public class UserServiceImpl implements IUserService {
         } else {
             userInfo.setIntegrity(100);
         }
-
-        if (userActiveInfoBean == null) {
-            userInfoBean.setLastActiveTime(userInfo.getCreateTime());
-        } else {
-            userInfoBean.setLastActiveTime(new Date(userActiveInfoBean.getLastActiveTime()));
-        }
+        userInfoBean.setLastActiveTime(userInfo.getLastActiveTime());
         userInfoBean.setOnline(isOnline);
         return userInfoBean;
     }
@@ -206,10 +208,9 @@ public class UserServiceImpl implements IUserService {
         if (null == userInfo) {
             return null;
         }
-        UserActiveInfoBean userActiveInfoBean = userCacheService.getUserActive(userInfo.getUserId());
         ResultUtil<Boolean> onlineResultUtil = this.userIdOnline(userInfo.getUserId(), clientContext);
         boolean isOnline = onlineResultUtil.getCode() == ErrorCode.SUCCESS && onlineResultUtil.getDataInfo();
-        return this.initUserInfoBean(userInfo, userActiveInfoBean, isOnline, true);
+        return this.initUserInfoBean(userInfo, isOnline, true);
     }
 
     @Override
@@ -266,29 +267,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResultUtil<Map<Integer, Date>> listUserLastActiveTime(List<Integer> userIds, ClientContext aDefault) {
-        ResultUtil<Map<Integer, Date>> resultUtil = new ResultUtil<>();
-        try {
-            Map<Integer, UserActiveInfoBean> userActiveInfoBeanMap = this.userCacheService.batchUserActive(userIds);
-            Map<Integer, Date> map = new HashMap<>();
-            if (ArrayUtils.isNotEmpty(userActiveInfoBeanMap)) {
-                userIds.forEach(userId -> {
-                    UserActiveInfoBean userActiveInfoBean = userActiveInfoBeanMap.get(userId);
-                    if (userActiveInfoBean != null) {
-                        map.put(userId, new Date(userActiveInfoBean.getLastActiveTime()));
-                    }
-                });
-            }
-            resultUtil.setDataInfo(map);
-
-        } catch (Exception err) {
-            UserServiceImpl.LOGGER.error("listUserLastActiveTime fail", err);
-            resultUtil.setCode(UserErrorCode.USER_ERROR);
-        }
-        return resultUtil;
-    }
-
-    @Override
     public ResultUtil<Void> updateUserAttr(int userId, Map<Short, Object> updateUserAttr, ClientContext clientContext) {
         ResultUtil<Void> resultUtil = new ResultUtil<>();
         try {
@@ -323,13 +301,15 @@ public class UserServiceImpl implements IUserService {
     public ResultUtil<Void> setUserOnlineStatus(int userId, boolean online, ClientContext aDefault) {
         UserServiceImpl.LOGGER.debug("setUserOnlineStatus userId={},online={}", userId, online);
         userCacheService.updateUserOnline(userId, online);
-        return ResultUtil.build(ErrorCode.SUCCESS);
-    }
-
-    @Override
-    public ResultUtil<Void> setUserActive(int userId, ClientContext clientDefault) {
-        UserServiceImpl.LOGGER.debug("setUserActive userId={},", userId);
-        userCacheService.updateUserActive(userId, ConstUtil.UserType.COMMON);
+        if (online) {
+            String key = "user.online.state.update." + userId;
+            if (this.redis.opsForValue().setIfAbsent(key, System.currentTimeMillis())) {
+                this.redis.expire(key, 3 * 60 * 1000, TimeUnit.MILLISECONDS);
+                Map<Short, Object> updateUserAttr = new HashMap();
+                updateUserAttr.put(ConstUtil.UserAttrId.LAST_ACTIV_TIME, System.currentTimeMillis());
+                this.userService.updateUserAttr(userId, updateUserAttr);
+            }
+        }
         return ResultUtil.build(ErrorCode.SUCCESS);
     }
 
@@ -338,16 +318,11 @@ public class UserServiceImpl implements IUserService {
         if (ArrayUtils.isNotEmpty(userIds)) {
             userIds.parallelStream().forEach((Integer userId) -> {
                 if (null != userId) {
-                    userCacheService.updateUserActive(userId, ConstUtil.UserType.CS);
-                    userCacheService.updateUserOnline(userId, online);
+                    this.setUserOnlineStatus(userId, online, aDefault);
                 }
             });
         }
         return ResultUtil.build(ErrorCode.SUCCESS);
-    }
-
-    private List<UserInfoBean> initUserInfoBean(List<UserInfo> userInfos, ClientContext clientContext) {
-        return this.initUserInfoBeans(userInfos);
     }
 }
 

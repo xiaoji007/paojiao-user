@@ -1,6 +1,7 @@
 package com.paojiao.user.handler;
 
 import com.fission.next.common.bean.ClientContext;
+import com.fission.task.util.TaskDataUtil;
 import com.fission.utils.bean.ResultUtil;
 import com.fission.utils.tool.ArrayUtils;
 import com.fission.utils.tool.ErrorCode;
@@ -9,6 +10,7 @@ import com.fission.utils.tool.StringUtil;
 import com.paojiao.user.api.bean.UserPicInfoBean;
 import com.paojiao.user.api.services.IUserPicService;
 import com.paojiao.user.api.util.UserErrorCode;
+import com.paojiao.user.data.mongo.entity.MGUserPicLogInfoEntity;
 import com.paojiao.user.service.bean.UserPicInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,6 +40,14 @@ public class UserPicServiceImpl implements IUserPicService {
                 return resultUtil;
             }
             this.userPicService.addUserPicInfo(userId, index, pic);
+
+            //上传日志
+            MGUserPicLogInfoEntity mgUserPicLogInfoEntity = new MGUserPicLogInfoEntity();
+            mgUserPicLogInfoEntity.setCreateTime(new Date());
+            mgUserPicLogInfoEntity.setIndex(index);
+            mgUserPicLogInfoEntity.setPic(pic);
+            mgUserPicLogInfoEntity.setUserId(userId);
+            TaskDataUtil.addTaskDataInfo(mgUserPicLogInfoEntity);
         } catch (Exception e) {
             String message = String.format("addUserPicInfo error.param(userId:%s,index:%s,pic:%s,context:%s)", userId, index, pic, JsonUtil.objToJsonString(clientContext));
             UserPicServiceImpl.LOGGER.error(message, e);

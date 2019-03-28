@@ -14,20 +14,17 @@ import com.paojiao.user.data.db.IUserWriteDao;
 import com.paojiao.user.data.db.entity.UserAttrInfoEntity;
 import com.paojiao.user.data.db.entity.UserInfoEntity;
 import com.paojiao.user.data.db.entity.UserInviteInfoEntity;
-import com.paojiao.user.data.mongo.IUserLogDao;
-import com.paojiao.user.data.mongo.entity.UserInviteUserInfoEntity;
+import com.paojiao.user.data.mongo.IMGUserLogDao;
+import com.paojiao.user.data.mongo.entity.MGUserInviteUserInfoEntity;
 import com.paojiao.user.service.IUserPicService;
 import com.paojiao.user.service.IUserService;
 import com.paojiao.user.service.bean.UserInfo;
 import com.paojiao.user.service.bean.UserInviteInfo;
 import com.paojiao.user.service.bean.UserPicInfo;
-import com.paojiao.user.util.RedisKeyUtil;
 import com.paojiao.user.util.RedisUtil;
 import com.paojiao.user.util.SurfingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +48,7 @@ public class UserServiceImpl implements IUserService {
     private IUserWriteDao userWriteDao;
 
     @Inject
-    private IUserLogDao userLogDao;
+    private IMGUserLogDao userLogDao;
 
     @Inject
     private ApplicationConfig applicationConfig;
@@ -94,7 +91,6 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    @Cacheable(key = RedisKeyUtil.USER_INFO, value = RedisKeyUtil.CACHE_NAME)
     @Override
     public UserInfo getUserInfo(int userId) {
         try {
@@ -105,11 +101,10 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    @CacheEvict(key = RedisKeyUtil.USER_INFO, value = RedisKeyUtil.CACHE_NAME)
     @Override
     public UserInfo getSelfInfo(int userId) {
         try {
-            UserInfoEntity userInfoEntity = this.userReadDao.getUserInfo(userId);
+            UserInfoEntity userInfoEntity = this.userReadDao.getSelfUserInfo(userId);
             return this.initUserInfo(userInfoEntity, true);
         } catch (Exception e) {
             throw new RollbackSourceException(e);
@@ -193,6 +188,9 @@ public class UserServiceImpl implements IUserService {
             if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.FOOD_HABIT))) {
                 userInfo.setFoodHabit(StringUtil.strToIntList(userAttr.get(ConstUtil.UserAttrId.FOOD_HABIT), ","));
             }
+            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.LAST_ACTIV_TIME))) {
+                userInfo.setLastActiveTime(new Date(Long.parseLong(userAttr.get(ConstUtil.UserAttrId.LAST_ACTIV_TIME))));
+            }
         }
 
         if (resetIntegrity) {
@@ -205,7 +203,6 @@ public class UserServiceImpl implements IUserService {
         return userInfo;
     }
 
-    @CacheEvict(key = RedisKeyUtil.USER_INFO, value = RedisKeyUtil.CACHE_NAME)
     @Override
     public void updateUserAttr(int userId, Map<Short, Object> updateUserAttr) {
         try {
@@ -259,6 +256,7 @@ public class UserServiceImpl implements IUserService {
                     case ConstUtil.UserAttrId.WEIGHT:
                     case ConstUtil.UserAttrId.HEIGHT:
                     case ConstUtil.UserAttrId.FOOD_HABIT:
+                    case ConstUtil.UserAttrId.LAST_ACTIV_TIME:
                         UserAttrInfoEntity userAttrInfoEntity = new UserAttrInfoEntity();
                         userAttrInfoEntity.setCreateTime(now);
                         userAttrInfoEntity.setLastUpdateTime(now);
@@ -289,10 +287,13 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    @CacheEvict(key = RedisKeyUtil.USER_INFO, value = RedisKeyUtil.CACHE_NAME)
     @Override
     public void clearUserCacheInfo(int userId) {
-
+        try {
+            this.userReadDao.getSelfUserInfo(userId);
+        } catch (Exception e) {
+            throw new FissionException(e);
+        }
     }
 
     @Override
@@ -315,7 +316,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserInviteCodeBean getUserRegisterInviteInfo(int userId) {
         try {
-            UserInviteUserInfoEntity userInviteUsernfoEntity = this.userLogDao.getUserRegisterInviteInfo(userId);
+            MGUserInviteUserInfoEntity userInviteUsernfoEntity = this.userLogDao.getUserRegisterInviteInfo(userId);
             if (userInviteUsernfoEntity == null) {
                 return null;
             }
@@ -340,17 +341,17 @@ public class UserServiceImpl implements IUserService {
                 try {
                     boolean invite = this.userWriteDao.subUserInviteNum(inviteCode);
                     Date now = new Date(System.currentTimeMillis());
-                    UserInviteUserInfoEntity userInviteUserInfoEntity = new UserInviteUserInfoEntity();
-                    userInviteUserInfoEntity.setId(userInviteInfoEntity.getUserId() + "_" + userId);
-                    userInviteUserInfoEntity.setInviteState(ConstUtil.InviteState.INIT);
-                    userInviteUserInfoEntity.setInvite(invite);
-                    userInviteUserInfoEntity.setInviteCode(userInviteInfoEntity.getInviteCode());
-                    userInviteUserInfoEntity.setInviteUserId(userId);
-                    userInviteUserInfoEntity.setShareType(userInviteInfoEntity.getShareType());
-                    userInviteUserInfoEntity.setUserId(userInviteInfoEntity.getUserId());
-                    userInviteUserInfoEntity.setUpdateTime(now);
-                    userInviteUserInfoEntity.setCreateTime(now);
-                    this.userLogDao.addUserInviteUserInfo(userInviteUserInfoEntity);
+                    MGUserInviteUserInfoEntity mgUserInviteUserInfoEntity = new MGUserInviteUserInfoEntity();
+                    mgUserInviteUserInfoEntity.setId(userInviteInfoEntity.getUserId() + "_" + userId);
+                    mgUserInviteUserInfoEntity.setInviteState(ConstUtil.InviteState.INIT);
+                    mgUserInviteUserInfoEntity.setInvite(invite);
+                    mgUserInviteUserInfoEntity.setInviteCode(userInviteInfoEntity.getInviteCode());
+                    mgUserInviteUserInfoEntity.setInviteUserId(userId);
+                    mgUserInviteUserInfoEntity.setShareType(userInviteInfoEntity.getShareType());
+                    mgUserInviteUserInfoEntity.setUserId(userInviteInfoEntity.getUserId());
+                    mgUserInviteUserInfoEntity.setUpdateTime(now);
+                    mgUserInviteUserInfoEntity.setCreateTime(now);
+                    this.userLogDao.addUserInviteUserInfo(mgUserInviteUserInfoEntity);
                 } catch (Exception e) {
                     throw new RollbackSourceException(e);
                 }
@@ -367,11 +368,11 @@ public class UserServiceImpl implements IUserService {
         List<UserInviteInfo> list = new ArrayList<>();
         RedisUtil.redisLock(this.redis, this.getUserInviteLockKey(userId), (Void v) -> {
             try {
-                List<UserInviteUserInfoEntity> userInviteLogInfoEntitys = this.userLogDao.listUserInviteUserInfo(userId, ConstUtil.InviteState.INIT, true);
+                List<MGUserInviteUserInfoEntity> userInviteLogInfoEntitys = this.userLogDao.listUserInviteUserInfo(userId, ConstUtil.InviteState.INIT, true);
                 if (ArrayUtils.isNullOrEmpty(userInviteLogInfoEntitys)) {
                     return;
                 }
-                userInviteLogInfoEntitys.forEach((UserInviteUserInfoEntity userInviteUserInfoEntity) -> {
+                userInviteLogInfoEntitys.forEach((MGUserInviteUserInfoEntity userInviteUserInfoEntity) -> {
                     if (null != userInviteUserInfoEntity) {
                         try {
                             if (this.userLogDao.manageUserInviteState(userInviteUserInfoEntity.getId())) {

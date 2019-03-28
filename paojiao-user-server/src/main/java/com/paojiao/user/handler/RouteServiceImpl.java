@@ -34,7 +34,6 @@ public class RouteServiceImpl implements RouteService {
                 JSONObject jsonObject = JSONObject.parseObject(message.getContent());
                 int userId = message.getFromUserId();
                 Boolean online = jsonObject.getBooleanValue("online");
-                this.userHandler.setUserActive(userId, ClientContext.Default);
                 this.userHandler.setUserOnlineStatus(userId, online, ClientContext.Default);
             }
             break;

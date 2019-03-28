@@ -4,9 +4,9 @@ import com.paojiao.user.data.db.entity.*;
 
 import java.sql.SQLException;
 
-public interface IKeyworldWriteDao {
+public interface IKeywordWriteDao {
 
-	int addNickNameKeyworldInfo(NickNameKeyworldInfoEntity nickNameKeyworldInfoEntity) throws SQLException;
+	int addNickNameKeyworldInfo(NickNameKeywordInfoEntity nickNameKeywordInfoEntity) throws SQLException;
 
 	void removeNickNameKeyworldInfo(int nickNameKeyworldId) throws SQLException;
 

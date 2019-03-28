@@ -16,7 +16,6 @@ public class UpdateUserHeadPic extends UpdateUserAttr {
 		super(ConstUtil.UserAttrId.HEAD_PIC);
 	}
 
-
 	@Override
 	public Map<Short, Object> getUpdateUserAttr(int userId,String data) {
 		if (StringUtil.isBlank(data)) {

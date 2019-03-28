@@ -1,5 +1,5 @@
 buildscript {
-    String path = "http://10.0.0.150/gradle_property.properties";
+    String path = "http://test.store.paojiao.com/gradle_property.properties";
     URL versionUrl = new URL(path);
     URLConnection urlConnection = versionUrl.openConnection();
     urlConnection.connect();

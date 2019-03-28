@@ -1,8 +1,10 @@
 package com.paojiao.user.controller.attr.init;
 
+import com.fission.next.common.error.FissionCodeException;
 import com.fission.next.common.error.FissionException;
 import com.fission.utils.tool.StringUtil;
 import com.paojiao.user.api.util.ConstUtil;
+import com.paojiao.user.api.util.UserErrorCode;
 import com.paojiao.user.controller.attr.UpdateUserAttr;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,7 @@ public class UpdateUserBirthday extends UpdateUserAttr {
         Map<Short, Object> map = new HashMap<>();
         Date birthday = null;
         if (StringUtil.isBlank(data)) {
-            //throw new FissionException("UpdateUserBirthday birthday is null");
+//            throw new FissionCodeException(UserErrorCode.BIRTHDAY_ERROR);
         } else {
             try {
                 birthday = UpdateUserBirthday.FORMAT.parse(data);

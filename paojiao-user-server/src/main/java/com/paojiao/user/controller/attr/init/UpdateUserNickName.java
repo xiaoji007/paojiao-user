@@ -1,20 +1,15 @@
 package com.paojiao.user.controller.attr.init;
 
-import com.fission.next.common.bean.ClientContext;
-import com.fission.next.common.error.FissionException;
+import com.fission.next.common.error.FissionCodeException;
 import com.fission.utils.tool.ArrayUtils;
 import com.fission.utils.tool.StringUtil;
-import com.paojiao.user.api.bean.UserInfoBean;
-import com.paojiao.user.api.services.IUserService;
 import com.paojiao.user.api.util.ConstUtil;
+import com.paojiao.user.api.util.UserErrorCode;
 import com.paojiao.user.config.ApplicationConfig;
 import com.paojiao.user.controller.attr.UpdateUserAttr;
-import com.paojiao.user.controller.exception.NickNameAsciiException;
-import com.paojiao.user.controller.exception.NickNameKeywordException;
-import com.paojiao.user.controller.exception.NickNameLengthException;
-import com.paojiao.user.controller.exception.NickNameNullException;
+import com.paojiao.user.controller.exception.KeywordException;
 import com.paojiao.user.controller.util.KeyworldUtil;
-import com.paojiao.user.service.IKeyworldService;
+import com.paojiao.user.service.IKeywordService;
 import com.paojiao.user.service.bean.NickNameAsciiInfo;
 import com.paojiao.user.service.bean.NickNameKeyworldInfo;
 import org.slf4j.Logger;
@@ -37,7 +32,7 @@ public class UpdateUserNickName extends UpdateUserAttr {
     private ApplicationConfig applicationConfig;
 
     @Inject
-    private IKeyworldService keyworldService;
+    private IKeywordService keywordService;
 
     public UpdateUserNickName() {
         super(ConstUtil.UserAttrId.NICK_NAME);
@@ -46,21 +41,21 @@ public class UpdateUserNickName extends UpdateUserAttr {
     @Override
     public Map<Short, Object> getUpdateUserAttr(int userId, String data) {
         if (StringUtil.isBlank(data)) {
-            throw new NickNameNullException();
+            throw new FissionCodeException(UserErrorCode.NICK_NAME_NULL_ERROR);
         }
 
         if (data.trim().length() > this.applicationConfig.getNickNameLength() || data.length() < 1) {
-            throw new NickNameLengthException();
+            throw new FissionCodeException(UserErrorCode.NICK_NAME_LENGTH_ERROR);
         }
 
         String keyworld = this.getNickNameAscii(data);
         if (StringUtil.isNotBlank(keyworld)) {
-            throw new NickNameAsciiException(keyworld);
+            throw new KeywordException(keyworld,UserErrorCode.NICK_NAME_ASCII_ERROR);
         }
 
         keyworld = KeyworldUtil.getKeyWorld(data, UpdateUserNickName.NICK_NAME_KEYWORLD_MAP);
         if (StringUtil.isNotBlank(keyworld)) {
-            throw new NickNameKeywordException(keyworld);
+            throw new KeywordException(keyworld,UserErrorCode.NICK_NAME_KEYWORD_ERROR);
         }
 
         Map<Short, Object> map = new HashMap<>();
@@ -70,7 +65,7 @@ public class UpdateUserNickName extends UpdateUserAttr {
 
     @PostConstruct
     public void initNickNameKeyword() {
-        List<NickNameKeyworldInfo> nickNameKeyworldInfoList = this.keyworldService.listAllNickNameKeyworldInfo();
+        List<NickNameKeyworldInfo> nickNameKeyworldInfoList = this.keywordService.listAllNickNameKeyworldInfo();
         Map<Short, Map<Character, Set<String>>> worldMap = new HashMap();
         if (ArrayUtils.isNotEmpty(nickNameKeyworldInfoList)) {
             nickNameKeyworldInfoList.forEach((NickNameKeyworldInfo nickNameKeyworldInfo) -> {
@@ -87,7 +82,7 @@ public class UpdateUserNickName extends UpdateUserAttr {
 
     @PostConstruct
     public void initNickNameAscii() {
-        List<NickNameAsciiInfo> nickNameAsciiInfoList = this.keyworldService.listAllNickNameAsciiInfo();
+        List<NickNameAsciiInfo> nickNameAsciiInfoList = this.keywordService.listAllNickNameAsciiInfo();
         Map<Short, List<Integer>> sortMap = new HashMap<>();
         Map<Short, Map<Integer, Integer>> asciiMap = new HashMap<>();
         if (null != nickNameAsciiInfoList && !nickNameAsciiInfoList.isEmpty()) {

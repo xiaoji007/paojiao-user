@@ -1,10 +1,11 @@
 package com.paojiao.user.controller.attr.init;
 
-import com.fission.next.common.error.FissionException;
-import com.paojiao.user.api.util.ConstUtil;
-import com.paojiao.user.controller.attr.UpdateUserAttr;
+import com.fission.next.common.error.FissionCodeException;
 import com.fission.utils.tool.StringUtil;
 import com.google.common.base.Joiner;
+import com.paojiao.user.api.util.ConstUtil;
+import com.paojiao.user.api.util.UserErrorCode;
+import com.paojiao.user.controller.attr.UpdateUserAttr;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class UpdateUserFoodHabit extends UpdateUserAttr {
 	@Override
 	public Map<Short, Object> getUpdateUserAttr(int userId, String data) {
 		if (StringUtil.isBlank(data)) {
-			throw new FissionException("UpdateUserProfessional food habit is null");
+			throw new FissionCodeException(UserErrorCode.FOOD_HABIT_ERROR);
 		}
 		List<Integer> foodHabits = StringUtil.strToIntList(data, ",");
 		data = Joiner.on(",").join(foodHabits);

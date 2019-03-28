@@ -4,8 +4,6 @@ import com.fission.next.common.bean.ClientContext;
 import com.fission.next.utils.ErrorCode;
 import com.fission.utils.bean.ResultUtil;
 import com.paojiao.user.api.services.IUserCacheService;
-import com.paojiao.user.controller.attr.init.UpdateUserNickName;
-import com.paojiao.user.service.IKeyworldService;
 import com.paojiao.user.service.IUserService;
 import org.springframework.stereotype.Service;
 

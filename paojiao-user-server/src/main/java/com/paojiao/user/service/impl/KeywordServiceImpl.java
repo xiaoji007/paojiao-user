@@ -2,68 +2,80 @@ package com.paojiao.user.service.impl;
 
 import com.fission.datasource.exception.RollbackSourceException;
 import com.fission.utils.tool.ArrayUtils;
-import com.paojiao.user.data.db.IKeyworldReadDao;
+import com.paojiao.user.data.db.IKeywordReadDao;
 import com.paojiao.user.data.db.entity.NickNameAsciiInfoEntity;
-import com.paojiao.user.data.db.entity.NickNameKeyworldInfoEntity;
-import com.paojiao.user.service.IKeyworldService;
+import com.paojiao.user.data.db.entity.NickNameKeywordInfoEntity;
+import com.paojiao.user.service.IKeywordService;
 import com.paojiao.user.service.bean.NickNameAsciiInfo;
 import com.paojiao.user.service.bean.NickNameKeyworldInfo;
-import com.paojiao.user.util.RedisKeyUtil;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import com.paojiao.user.util.ConstUtil;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class KeyworldServiceImpl implements IKeyworldService {
+public class KeywordServiceImpl implements IKeywordService {
 
     @Inject
-    private IKeyworldReadDao keyworldReadDao;
+    private IKeywordReadDao keyworldReadDao;
 
-    @Cacheable(key = RedisKeyUtil.NICK, value = RedisKeyUtil.CACHE_NAME)
+    @Inject
+    @Named(ConstUtil.NameUtil.REDIS_USER)
+    private RedisTemplate redis;
+
+    public static final String NICK_KEY = "user.nick.keyworld";
+    public static final String NICK_ASCII_KEY = "user.nick.ascii.keyworld";
+
     @Override
     public List<NickNameKeyworldInfo> listAllNickNameKeyworldInfo() {
+        return (List<NickNameKeyworldInfo>) this.redis.opsForList().range(KeywordServiceImpl.NICK_KEY, 0, -1);
+    }
+
+    @Override
+    public void refreshNickNameKeyworldInfo() {
         try {
-            List<NickNameKeyworldInfoEntity> nickNameKeyworldInfoEntitys = this.keyworldReadDao.listAllNickNameKeywordInfo();
-            if (ArrayUtils.isNullOrEmpty(nickNameKeyworldInfoEntitys)) {
-                return null;
+            List<NickNameKeywordInfoEntity> nickNameKeywordInfoEntities = this.keyworldReadDao.listAllNickNameKeywordInfo();
+            if (ArrayUtils.isNullOrEmpty(nickNameKeywordInfoEntities)) {
+                this.redis.delete(KeywordServiceImpl.NICK_KEY);
+                return;
             }
             List<NickNameKeyworldInfo> list = new ArrayList<>();
-            nickNameKeyworldInfoEntitys.forEach((NickNameKeyworldInfoEntity nickNameKeyworldInfoEntity) -> {
-                if (null == nickNameKeyworldInfoEntity) {
+            nickNameKeywordInfoEntities.forEach((NickNameKeywordInfoEntity nickNameKeywordInfoEntity) -> {
+                if (null == nickNameKeywordInfoEntity) {
                     return;
                 }
                 NickNameKeyworldInfo nickNameKeyworldInfo = new NickNameKeyworldInfo();
-                nickNameKeyworldInfo.setKeyworldId(nickNameKeyworldInfoEntity.getKeyworldId());
-                nickNameKeyworldInfo.setKeyworld(nickNameKeyworldInfoEntity.getKeyworld().trim());
-                nickNameKeyworldInfo.setRuleType(nickNameKeyworldInfoEntity.getRuleType());
-                long createTime = null == nickNameKeyworldInfoEntity.getCreateTime() ? System.currentTimeMillis() : nickNameKeyworldInfoEntity.getCreateTime().getTime();
+                nickNameKeyworldInfo.setKeyworldId(nickNameKeywordInfoEntity.getKeywordId());
+                nickNameKeyworldInfo.setKeyworld(nickNameKeywordInfoEntity.getKeyword().trim());
+                nickNameKeyworldInfo.setRuleType(nickNameKeywordInfoEntity.getRuleType());
+                long createTime = null == nickNameKeywordInfoEntity.getCreateTime() ? System.currentTimeMillis() : nickNameKeywordInfoEntity.getCreateTime().getTime();
                 nickNameKeyworldInfo.setCreateTime(new Date(createTime));
                 list.add(nickNameKeyworldInfo);
             });
-            return list;
+            this.redis.delete(KeywordServiceImpl.NICK_KEY);
+            this.redis.opsForList().leftPushAll(KeywordServiceImpl.NICK_KEY, list);
         } catch (Exception e) {
             throw new RollbackSourceException("listAllNickNameKeyworldInfo error.param", e);
         }
     }
 
-    @CacheEvict(key = RedisKeyUtil.NICK, value = RedisKeyUtil.CACHE_NAME)
-    @Override
-    public void refreshNickNameKeyworldInfo() {
-
-    }
-
-    @Cacheable(key = RedisKeyUtil.NICK_ASCII, value = RedisKeyUtil.CACHE_NAME)
     @Override
     public List<NickNameAsciiInfo> listAllNickNameAsciiInfo() {
+        return (List<NickNameAsciiInfo>) this.redis.opsForList().range(KeywordServiceImpl.NICK_ASCII_KEY, 0, -1);
+    }
+
+    @Override
+    public void refreshNickNameAsciiInfo() {
         try {
             List<NickNameAsciiInfoEntity> nickNameAsciiInfoEntitys = this.keyworldReadDao.listAllNickNameAsciiInfo();
             if (ArrayUtils.isNullOrEmpty(nickNameAsciiInfoEntitys)) {
-                return null;
+                this.redis.delete(KeywordServiceImpl.NICK_KEY);
+                return;
             }
             List<NickNameAsciiInfo> list = new ArrayList<>();
             nickNameAsciiInfoEntitys.forEach((NickNameAsciiInfoEntity nickNameAsciiInfoEntity) -> {
@@ -79,15 +91,10 @@ public class KeyworldServiceImpl implements IKeyworldService {
                 nickNameAsciiInfo.setCreateTime(new Date(createTime));
                 list.add(nickNameAsciiInfo);
             });
-            return list;
+            this.redis.delete(KeywordServiceImpl.NICK_KEY);
+            this.redis.opsForList().leftPushAll(KeywordServiceImpl.NICK_KEY, list);
         } catch (Exception e) {
             throw new RollbackSourceException("listAllNickNameKeyworldInfo error.param", e);
         }
-    }
-
-    @CacheEvict(key = RedisKeyUtil.NICK_ASCII, value = RedisKeyUtil.CACHE_NAME)
-    @Override
-    public void refreshNickNameAsciiInfo() {
-
     }
 }

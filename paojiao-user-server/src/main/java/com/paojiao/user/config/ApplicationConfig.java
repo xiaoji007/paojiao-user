@@ -24,6 +24,7 @@ public class ApplicationConfig {
 
     private long animateTime;
     private int nickNameLength;
+    private int descLength;
     private boolean nickNameVerify;
     private long onlineCheckTime = 3 * 60 * 1000;
     private String userAttrIntegrity;

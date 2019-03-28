@@ -47,7 +47,7 @@ public class UserPicServiceImpl implements IUserPicService {
             Callable<Integer> callable = () -> {
                 UserPicInfoEntity userPicInfoEntity = new UserPicInfoEntity();
                 userPicInfoEntity.setUserId(userId);
-                userPicInfoEntity.setIndex(index);
+                userPicInfoEntity.setIndex((short)index);
                 userPicInfoEntity.setUserPicUrl(pic);
                 userPicInfoEntity.setVerifyState(this.applicationConfig.isUserPicVerify() ? ConstUtil.UserPicVerifyState.INIT : ConstUtil.UserPicVerifyState.PASS);
                 userPicInfoEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
@@ -86,30 +86,30 @@ public class UserPicServiceImpl implements IUserPicService {
                     }
                     if (toIndex < 0) { // 图片重新排序
                         removeSite++;
-                        userPicInfoEntity.setIndex(removeSite);
+                        userPicInfoEntity.setIndex((short)removeSite);
                         updateUserPicInfoEntitys.add(userPicInfoEntity);
                     } else if (toIndex == 0) { //删除图片
                         if (userPicInfoEntity.getIndex() >= index) {
                             removeSite = userPicInfoEntity.getIndex() - 1;
                             if (userPicInfoEntity.getIndex() > index) {
-                                userPicInfoEntity.setIndex(userPicInfoEntity.getIndex() - 1);
+                                userPicInfoEntity.setIndex((short)(userPicInfoEntity.getIndex() - 1));
                                 updateUserPicInfoEntitys.add(userPicInfoEntity);
                             }
                         }
                     } else { //图片移动
                         if (userPicInfoEntity.getIndex() == index) {
-                            userPicInfoEntity.setIndex(toIndex);
+                            userPicInfoEntity.setIndex((short)toIndex);
                             updateUserPicInfoEntitys.add(userPicInfoEntity);
                             continue;
                         }
                         if (index < toIndex) {
                             if (userPicInfoEntity.getIndex() > index && userPicInfoEntity.getIndex() <= toIndex) {
-                                userPicInfoEntity.setIndex(userPicInfoEntity.getIndex() - 1);
+                                userPicInfoEntity.setIndex((short)(userPicInfoEntity.getIndex() - 1));
                                 updateUserPicInfoEntitys.add(userPicInfoEntity);
                             }
                         } else {
                             if (userPicInfoEntity.getIndex() >= toIndex && userPicInfoEntity.getIndex() < index) {
-                                userPicInfoEntity.setIndex(userPicInfoEntity.getIndex() + 1);
+                                userPicInfoEntity.setIndex((short)(userPicInfoEntity.getIndex() + 1));
                                 updateUserPicInfoEntitys.add(userPicInfoEntity);
                             }
                         }
