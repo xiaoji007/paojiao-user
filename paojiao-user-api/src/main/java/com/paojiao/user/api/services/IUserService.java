@@ -65,6 +65,15 @@ public interface IUserService {
     ResultUtil<UserInfoBean> getUserInfo(int userId, ClientContext clientContext);
 
     /**
+     * 获取用户信息
+     *
+     * @param userIds
+     * @param clientContext
+     * @return
+     */
+    ResultUtil<List<UserInfoBean>> listUserInfo(List<Integer> userIds, ClientContext clientContext);
+
+    /**
      * 更新用户属性
      *
      * @param userId

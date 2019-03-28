@@ -29,10 +29,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -223,6 +220,29 @@ public class UserServiceImpl implements IUserService {
             return ResultUtil.build(ErrorCode.SUCCESS, userInfoBean);
         } catch (Exception e) {
             String message = String.format("getUserInfo error.param(userId:%s,context:%s)", userId, JsonUtil.objToJsonString(clientContext));
+            UserServiceImpl.LOGGER.error(message, e);
+            return ResultUtil.build(UserErrorCode.USER_ERROR);
+        }
+    }
+
+    @Override
+    public ResultUtil<List<UserInfoBean>> listUserInfo(List<Integer> userIds, ClientContext clientContext) {
+        try {
+            if (ArrayUtils.isNullOrEmpty(userIds)) {
+                return ResultUtil.build(ErrorCode.SUCCESS);
+            }
+            List<UserInfoBean> list = Collections.synchronizedList(new ArrayList<>());
+            userIds.parallelStream().forEach((Integer userId) -> {
+                if (null != userId) {
+                    UserInfoBean userInfoBean = this.getUserInfo(userId, clientContext).getDataInfo();
+                    if (null != userInfoBean) {
+                        list.add(userInfoBean);
+                    }
+                }
+            });
+            return ResultUtil.build(ErrorCode.SUCCESS, list);
+        } catch (Exception e) {
+            String message = String.format("listUserInfo error.param(userIds:%s,context:%s)", JsonUtil.objToJsonString(userIds), JsonUtil.objToJsonString(clientContext));
             UserServiceImpl.LOGGER.error(message, e);
             return ResultUtil.build(UserErrorCode.USER_ERROR);
         }
