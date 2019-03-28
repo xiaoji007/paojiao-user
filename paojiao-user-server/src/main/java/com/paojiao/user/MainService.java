@@ -7,12 +7,12 @@ import com.fission.fastdfs.spring.EnableFastDfs;
 import com.fission.logging.spring.EnableLogging;
 import com.fission.mongodb.spring.EnableMongo;
 import com.fission.motan.spring.EnableMotanRpc;
-import com.fission.next.common.transport.spring.EnableTransport;
 import com.fission.next.common.web.spring.EnableWeb;
 import com.fission.perfmon.spring.EnablePerfmon;
 import com.fission.rabbit.spring.EnableRabbit;
 import com.fission.redis.spring.EnableRedis;
 import com.fission.utils.tool.ApplicationMain;
+import com.message.api.util.service.util.EnableMessage;
 import com.paojiao.user.util.ConstUtil;
 import com.xxl.job.core.spring.EnableJob;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,7 +35,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @EnableJdbcTemplate(@Jdbc(db = ConstUtil.NameUtil.DB_USER))
 @EnableRedis(ConstUtil.NameUtil.REDIS_USER)
 @EnableMongo(ConstUtil.NameUtil.MONGO_USER)
-@EnableTransport
+@EnableMessage
 @EnableMotanRpc
 @EnableFastDfs
 @EnableLogging
