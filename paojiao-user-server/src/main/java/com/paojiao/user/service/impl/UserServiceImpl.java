@@ -42,13 +42,15 @@ public class UserServiceImpl implements IUserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Inject
+    @Named("userReadDao")
     private IUserReadDao userReadDao;
 
     @Inject
+    @Named("userWriteDao")
     private IUserWriteDao userWriteDao;
 
     @Inject
-    private IMGUserLogDao userLogDao;
+    private IMGUserLogDao mgUserLogDao;
 
     @Inject
     private ApplicationConfig applicationConfig;
@@ -316,7 +318,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserInviteCodeBean getUserRegisterInviteInfo(int userId) {
         try {
-            MGUserInviteUserInfoEntity userInviteUsernfoEntity = this.userLogDao.getUserRegisterInviteInfo(userId);
+            MGUserInviteUserInfoEntity userInviteUsernfoEntity = this.mgUserLogDao.getUserRegisterInviteInfo(userId);
             if (userInviteUsernfoEntity == null) {
                 return null;
             }
@@ -351,7 +353,7 @@ public class UserServiceImpl implements IUserService {
                     mgUserInviteUserInfoEntity.setUserId(userInviteInfoEntity.getUserId());
                     mgUserInviteUserInfoEntity.setUpdateTime(now);
                     mgUserInviteUserInfoEntity.setCreateTime(now);
-                    this.userLogDao.addUserInviteUserInfo(mgUserInviteUserInfoEntity);
+                    this.mgUserLogDao.addUserInviteUserInfo(mgUserInviteUserInfoEntity);
                 } catch (Exception e) {
                     throw new RollbackSourceException(e);
                 }
@@ -368,14 +370,14 @@ public class UserServiceImpl implements IUserService {
         List<UserInviteInfo> list = new ArrayList<>();
         RedisUtil.redisLock(this.redis, this.getUserInviteLockKey(userId), (Void v) -> {
             try {
-                List<MGUserInviteUserInfoEntity> userInviteLogInfoEntitys = this.userLogDao.listUserInviteUserInfo(userId, ConstUtil.InviteState.INIT, true);
+                List<MGUserInviteUserInfoEntity> userInviteLogInfoEntitys = this.mgUserLogDao.listUserInviteUserInfo(userId, ConstUtil.InviteState.INIT, true);
                 if (ArrayUtils.isNullOrEmpty(userInviteLogInfoEntitys)) {
                     return;
                 }
                 userInviteLogInfoEntitys.forEach((MGUserInviteUserInfoEntity userInviteUserInfoEntity) -> {
                     if (null != userInviteUserInfoEntity) {
                         try {
-                            if (this.userLogDao.manageUserInviteState(userInviteUserInfoEntity.getId())) {
+                            if (this.mgUserLogDao.manageUserInviteState(userInviteUserInfoEntity.getId())) {
                                 UserInviteInfo userInviteInfo = new UserInviteInfo();
                                 long time = Optional.ofNullable(userInviteUserInfoEntity.getCreateTime()).orElse(new Date()).getTime();
                                 userInviteInfo.setCreateTime(new Date(time));

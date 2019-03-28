@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository
+@Repository("userReadDao")
 public class UserReadDaoImpl implements IUserReadDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserReadDaoImpl.class);
 
