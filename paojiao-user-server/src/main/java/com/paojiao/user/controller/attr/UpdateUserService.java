@@ -2,7 +2,6 @@ package com.paojiao.user.controller.attr;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fission.next.common.bean.ClientContext;
-import com.fission.next.common.constant.Language;
 import com.fission.next.common.error.FissionException;
 import com.fission.next.utils.ErrorCode;
 import com.fission.utils.tool.ArrayUtils;
@@ -41,15 +40,7 @@ public class UpdateUserService {
 //			if (!data.containsKey(ConstUtil.UserAttrId.BIRTHDAY)) {
 //				throw new BirthdayException();
 //			}
-            Integer language = (Integer) data.get(ConstUtil.UserAttrId.LANGUAGE_TYPE);
-            if (null == language) {
-                language = Language.UNDEFIND;
-                data.put(ConstUtil.UserAttrId.LANGUAGE_TYPE, language);
-                data.put(ConstUtil.UserAttrId.REGION, (language / Language.BASE_REGION) * Language.BASE_REGION);
-            }
-//            data.put(ConstUtil.UserAttrId.HEAD_PIC, applicationConfig.getPicBySex(ConstUtil.UserAttrId.SEX));
             data.put(ConstUtil.UserAttrId.USER_TYPE, ConstUtil.UserType.COMMON);
-            data.put(ConstUtil.UserAttrId.OBJECTIVE, ConstUtil.ObjectiveType.CHAT);
         } else {
             data.remove(ConstUtil.UserAttrId.SEX);
         }

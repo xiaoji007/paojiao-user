@@ -51,6 +51,35 @@ public class ConstUtil {
          * 坐标
          */
         public static final short GIS = 5;
+        /**
+         * 用户登录id
+         */
+        public static final short LOGIN_ID = 6;
+
+        /**
+         * 用户靓号
+         */
+        public static final short SURFING = 7;
+
+        /**
+         * 用户类型
+         */
+        public static final short USER_TYPE = 8;
+
+        /**
+         * 用户信息完成度
+         */
+        public static final short INTEGRITY = 9;
+
+        /**
+         * 用户照片数
+         */
+        public static final short INDEX_PIC = 10;
+
+        /**
+         * 用户靓号
+         */
+        public static final short DEFAULT_SURFING = 11;
 
         /**
          *  用户属性信息
@@ -61,106 +90,20 @@ public class ConstUtil {
         /**
          * 描述
          */
-        public static final short USER_DESC = 6;
+        public static final short USER_DESC = 100;
         /**
          * 家乡
          */
-        public static final short HOMETOWN = 7;
-        /**
-         * 现居地
-         */
-        public static final short PRESENT_ADDRESS = 8;
+        public static final short CITY = 101;
         /**
          * 职业
          */
-        public static final short PROFESSIONAL = 9;
-        /**
-         * 学校
-         */
-        public static final short SCHOOL = 10;
-        /**
-         * 区域
-         */
-        public static final short REGION = 11;
-        /**
-         * 音频介绍
-         */
-        public static final short AUDIO_INTRODUCE_URL = 12;
-        /**
-         * 视频介绍
-         */
-        public static final short VIDEO_INTRODUCE_URL = 13;
-        /**
-         * 语言类型
-         */
-        public static final short LANGUAGE_TYPE = 14;
-        /**
-         * 目的
-         */
-        public static final short OBJECTIVE = 15;
-        /**
-         * 情感状态
-         */
-        public static final short RELATIONSHIP_STATUS = 16;
-        /**
-         * 宗教
-         */
-        public static final short RELIGION = 17;
-
-        /**
-         * 用户基本信息
-         */
-
-        /**
-         * 用户登录id
-         */
-        public static final short LOGIN_ID = 18;
-
-        /**
-         * 用户靓号
-         */
-        public static final short SURFING = 19;
-
-        /**
-         * 用户类型
-         */
-        public static final short USER_TYPE = 20;
-
-        /**
-         * 用户信息完成度
-         */
-        public static final short INTEGRITY = 21;
-
-        /**
-         * 用户照片数
-         */
-        public static final short INDEX_PIC = 22;
-
-
-        /**
-         * 体重
-         */
-        public static final short WEIGHT = 23;
-
-        /**
-         * 升高
-         */
-        public static final short HEIGHT = 24;
-
-        /**
-         * 饮食习惯
-         */
-        public static final short FOOD_HABIT = 25;
-
-        /**
-         * 用户靓号
-         */
-        public static final short DEFAULT_SURFING = 26;
+        public static final short PROFESSIONAL = 102;
 
         /**
          * 最后活跃时间
          */
-        public static final short LAST_ACTIV_TIME = 27;
+        public static final short LAST_ACTIV_TIME = 103;
 
         public static String getUpateUserAttrEventName(short userAttrId) {
             switch (userAttrId) {
@@ -212,74 +155,13 @@ public class ConstUtil {
                 /**
                  * 家乡
                  */
-                case ConstUtil.UserAttrId.HOMETOWN:
+                case UserAttrId.CITY:
                     return RouteFieldNames.HOMETOWN;
-                /**
-                 * 现居地
-                 */
-                case ConstUtil.UserAttrId.PRESENT_ADDRESS:
-                    return RouteFieldNames.PRESENT_ADDRESS;
-                /**
-                 * 情感状态
-                 */
-                case ConstUtil.UserAttrId.RELATIONSHIP_STATUS:
-                    return RouteFieldNames.RELATIONSHIP_STATUS;
                 /**
                  * 职业
                  */
                 case ConstUtil.UserAttrId.PROFESSIONAL:
                     return RouteFieldNames.PROFESSIONAL;
-                /**
-                 * 学校
-                 */
-                case ConstUtil.UserAttrId.SCHOOL:
-                    return RouteFieldNames.SCHOOL;
-                /**
-                 * 区域
-                 */
-                case ConstUtil.UserAttrId.REGION:
-                    return RouteFieldNames.REGION_ID;
-                /**
-                 * 音频介绍
-                 */
-                case ConstUtil.UserAttrId.AUDIO_INTRODUCE_URL:
-                    return RouteFieldNames.AUDIO_INTRODUCE_URL;
-                /**
-                 * 视频介绍
-                 */
-                case ConstUtil.UserAttrId.VIDEO_INTRODUCE_URL:
-                    return RouteFieldNames.VIDEO_INTRODUCE_URL;
-                /**
-                 * 目的
-                 */
-                case ConstUtil.UserAttrId.OBJECTIVE:
-                    return RouteFieldNames.OBJECTIVE;
-                /**
-                 * 语言
-                 */
-                case ConstUtil.UserAttrId.LANGUAGE_TYPE:
-                    return RouteFieldNames.LANGUAGE_TYPE;
-                /**
-                 * 宗教
-                 */
-                case ConstUtil.UserAttrId.RELIGION:
-                    return RouteFieldNames.RELIGION;
-                /**
-                 * 体重
-                 */
-                case ConstUtil.UserAttrId.WEIGHT:
-                    return RouteFieldNames.WEIGHT;
-                /**
-                 * 身高
-                 */
-                case ConstUtil.UserAttrId.HEIGHT:
-                    return RouteFieldNames.HEIGHT;
-                /**
-                 * 饮食习惯
-                 */
-                case ConstUtil.UserAttrId.FOOD_HABIT:
-                    return RouteFieldNames.FOOD_HABIT;
-
             }
             return null;
         }

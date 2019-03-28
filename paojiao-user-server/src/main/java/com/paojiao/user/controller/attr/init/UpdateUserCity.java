@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class UpdateUserPresentAddress extends UpdateUserAttr {
+public class UpdateUserCity extends UpdateUserAttr {
 
-    public UpdateUserPresentAddress() {
-        super(ConstUtil.UserAttrId.PRESENT_ADDRESS);
+    public UpdateUserCity() {
+        super(ConstUtil.UserAttrId.CITY);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class UpdateUserPresentAddress extends UpdateUserAttr {
             data = "";
         }
         Map<Short, Object> map = new HashMap<>();
-        map.put(ConstUtil.UserAttrId.PRESENT_ADDRESS, data);
+        map.put(ConstUtil.UserAttrId.CITY, data);
         return map;
     }
 

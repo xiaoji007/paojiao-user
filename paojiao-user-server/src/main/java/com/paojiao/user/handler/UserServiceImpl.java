@@ -168,20 +168,8 @@ public class UserServiceImpl implements IUserService {
         userInfoBean.setBirthday(userInfo.getBirthday());
         userInfoBean.setGisX(null == userInfo.getGisX() ? null : userInfo.getGisX().toString());
         userInfoBean.setGisY(null == userInfo.getGisY() ? null : userInfo.getGisY().toString());
-        userInfoBean.setHometown(userInfo.getHometown());
-        userInfoBean.setPresentAddress(userInfo.getPresentAddress());
-        userInfoBean.setRelationshipStatus(userInfo.getRelationshipStatus());
+        userInfoBean.setCity(userInfo.getCity());
         userInfoBean.setProfessional(userInfo.getProfessional());
-        userInfoBean.setSchool(userInfo.getSchool());
-        userInfoBean.setRegionId(userInfo.getRegionId());
-        userInfoBean.setAudioIntroduceUrl(userInfo.getAudioIntroduceUrl());
-        userInfoBean.setVideoIntroduceUrl(userInfo.getVideoIntroduceUrl());
-        userInfoBean.setLanguageType(userInfo.getLanguageType());
-        userInfoBean.setObjective(userInfo.getObjective());
-        userInfoBean.setReligion(userInfo.getReligion());
-        userInfoBean.setFoodHabit(userInfo.getFoodHabit());
-        userInfoBean.setWeight(userInfo.getWeight());
-        userInfoBean.setHeight(userInfo.getHeight());
         userInfoBean.setCreateTime(userInfo.getCreateTime());
         int integrity = this.applicationConfig.getUserAttrIntegrity();
         if (integrity > 0) {
@@ -189,7 +177,6 @@ public class UserServiceImpl implements IUserService {
             if (integrityTemp < 1) {
                 if (resetIntegrity) {
                     integrityTemp = this.userService.resetUserIntegrity(userInfo.getUserId(), 0, resetIntegrity);
-//					this.userTaskService.addResetIntegrityUser(userInfo.getUserId());
                 }
             }
             userInfoBean.setIntegrity(Math.round(integrityTemp * 100.0f / integrity));

@@ -316,34 +316,6 @@ public class UserController {
     }
 
     /**
-     * 语音介绍
-     *
-     * @param clientContext
-     * @param multipartFile
-     * @param duration
-     * @return
-     */
-    @Login
-    @RequestMapping("/audio/introduce/upload")
-    public ResultUtil<Object> uploadAudioIntroduce(ClientContext clientContext, @RequestParam(ParamNameUtil.INTRODUCE) MultipartFile multipartFile, @RequestParam(ParamNameUtil.DURATION) long duration) {
-        return this.uploadIntroduce(clientContext, multipartFile, duration, String.valueOf(ConstUtil.UserAttrId.AUDIO_INTRODUCE_URL));
-    }
-
-    /**
-     * 视频介绍
-     *
-     * @param clientContext
-     * @param multipartFile
-     * @param duration
-     * @return
-     */
-    @Login
-    @RequestMapping("/video/introduce/upload")
-    public ResultUtil<Object> uploadVideoIntroduce(ClientContext clientContext, @RequestParam(ParamNameUtil.INTRODUCE) MultipartFile multipartFile, @RequestParam(ParamNameUtil.DURATION) long duration) {
-        return this.uploadIntroduce(clientContext, multipartFile, duration, String.valueOf(ConstUtil.UserAttrId.VIDEO_INTRODUCE_URL));
-    }
-
-    /**
      * 获取用户信息
      *
      * @param userId 用户id
@@ -387,22 +359,9 @@ public class UserController {
 
                 userInfoBean.setGisX(StringUtil.isBlank(bean.getGisX()) ? null : new BigDecimal(bean.getGisX()));
                 userInfoBean.setGisY(StringUtil.isBlank(bean.getGisY()) ? null : new BigDecimal(bean.getGisY()));
-                userInfoBean.setHometown(StringUtil.isNull(bean.getHometown()) ? "" : bean.getHometown());
-                userInfoBean.setPresentAddress(StringUtil.isNull(bean.getPresentAddress()) ? "" : bean.getPresentAddress());
-                userInfoBean.setRelationshipStatus(bean.getRelationshipStatus());
+                userInfoBean.setCity(StringUtil.isNull(bean.getCity()) ? "" : bean.getCity());
                 userInfoBean.setProfessional(StringUtil.isNull(bean.getProfessional()) ? "" : bean.getProfessional());
-                userInfoBean.setSchool(StringUtil.isNull(bean.getSchool()) ? "" : bean.getSchool());
-                userInfoBean.setRegionId(bean.getRegionId());
-                userInfoBean.setAudioIntroduceUrl(StringUtil.isNull(bean.getAudioIntroduceUrl()) ? "" : bean.getAudioIntroduceUrl());
-                userInfoBean.setVideoIntroduceUrl(StringUtil.isNull(bean.getVideoIntroduceUrl()) ? "" : bean.getVideoIntroduceUrl());
-                userInfoBean.setLanguageType(bean.getLanguageType());
-                userInfoBean.setObjective(bean.getObjective());
-                userInfoBean.setReligion(bean.getReligion());
                 userInfoBean.setCreateTime(bean.getCreateTime());
-                userInfoBean.setFoodHabit(bean.getFoodHabit());
-                userInfoBean.setIntegrity(bean.getIntegrity());
-                userInfoBean.setWeight(bean.getWeight());
-                userInfoBean.setHeight(bean.getHeight());
                 resultUtil.setDataInfo(userInfoBean);
             }
             return resultUtil;

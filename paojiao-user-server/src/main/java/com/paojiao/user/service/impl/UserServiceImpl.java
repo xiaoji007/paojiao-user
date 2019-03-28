@@ -156,40 +156,7 @@ public class UserServiceImpl implements IUserService {
             }
 
             userInfo.setUserDesc(userAttr.get(ConstUtil.UserAttrId.USER_DESC));
-            userInfo.setHometown(userAttr.get(ConstUtil.UserAttrId.HOMETOWN));
-            userInfo.setPresentAddress(userAttr.get(ConstUtil.UserAttrId.PRESENT_ADDRESS));
-
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.RELATIONSHIP_STATUS))) {
-                userInfo.setRelationshipStatus(Short.parseShort(userAttr.get(ConstUtil.UserAttrId.RELATIONSHIP_STATUS)));
-            }
             userInfo.setProfessional(userAttr.get(ConstUtil.UserAttrId.PROFESSIONAL));
-            userInfo.setSchool(userAttr.get(ConstUtil.UserAttrId.SCHOOL));
-
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.REGION))) {
-                userInfo.setRegionId(Integer.parseInt(userAttr.get(ConstUtil.UserAttrId.REGION)));
-            }
-            userInfo.setAudioIntroduceUrl(userAttr.get(ConstUtil.UserAttrId.AUDIO_INTRODUCE_URL));
-            userInfo.setVideoIntroduceUrl(userAttr.get(ConstUtil.UserAttrId.VIDEO_INTRODUCE_URL));
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.LANGUAGE_TYPE))) {
-                userInfo.setLanguageType(Short.parseShort(userAttr.get(ConstUtil.UserAttrId.LANGUAGE_TYPE)));
-            }
-
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.OBJECTIVE))) {
-                userInfo.setObjective(Short.parseShort(userAttr.get(ConstUtil.UserAttrId.OBJECTIVE)));
-            }
-
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.RELIGION))) {
-                userInfo.setReligion(Integer.parseInt(userAttr.get(ConstUtil.UserAttrId.RELIGION)));
-            }
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.WEIGHT))) {
-                userInfo.setWeight(Integer.parseInt(userAttr.get(ConstUtil.UserAttrId.WEIGHT)));
-            }
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.HEIGHT))) {
-                userInfo.setHeight(Integer.parseInt(userAttr.get(ConstUtil.UserAttrId.HEIGHT)));
-            }
-            if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.FOOD_HABIT))) {
-                userInfo.setFoodHabit(StringUtil.strToIntList(userAttr.get(ConstUtil.UserAttrId.FOOD_HABIT), ","));
-            }
             if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.LAST_ACTIV_TIME))) {
                 userInfo.setLastActiveTime(new Date(Long.parseLong(userAttr.get(ConstUtil.UserAttrId.LAST_ACTIV_TIME))));
             }
@@ -243,21 +210,9 @@ public class UserServiceImpl implements IUserService {
                         break;
                     //用户扩信息
                     case ConstUtil.UserAttrId.USER_DESC:
-                    case ConstUtil.UserAttrId.SCHOOL:
                     case ConstUtil.UserAttrId.PROFESSIONAL:
-                    case ConstUtil.UserAttrId.HOMETOWN:
-                    case ConstUtil.UserAttrId.PRESENT_ADDRESS:
-                    case ConstUtil.UserAttrId.RELATIONSHIP_STATUS:
-                    case ConstUtil.UserAttrId.OBJECTIVE:
-                    case ConstUtil.UserAttrId.REGION:
-                    case ConstUtil.UserAttrId.AUDIO_INTRODUCE_URL:
-                    case ConstUtil.UserAttrId.VIDEO_INTRODUCE_URL:
-                    case ConstUtil.UserAttrId.LANGUAGE_TYPE:
-                    case ConstUtil.UserAttrId.RELIGION:
+                    case ConstUtil.UserAttrId.CITY:
                     case ConstUtil.UserAttrId.GIS:
-                    case ConstUtil.UserAttrId.WEIGHT:
-                    case ConstUtil.UserAttrId.HEIGHT:
-                    case ConstUtil.UserAttrId.FOOD_HABIT:
                     case ConstUtil.UserAttrId.LAST_ACTIV_TIME:
                         UserAttrInfoEntity userAttrInfoEntity = new UserAttrInfoEntity();
                         userAttrInfoEntity.setCreateTime(now);
