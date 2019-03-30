@@ -157,6 +157,7 @@ public class UserServiceImpl implements IUserService {
 
             userInfo.setUserDesc(userAttr.get(ConstUtil.UserAttrId.USER_DESC));
             userInfo.setProfessional(userAttr.get(ConstUtil.UserAttrId.PROFESSIONAL));
+            userInfo.setCity(userAttr.get(ConstUtil.UserAttrId.CITY));
             if (StringUtil.isNotBlank(userAttr.get(ConstUtil.UserAttrId.LAST_ACTIV_TIME))) {
                 userInfo.setLastActiveTime(new Date(Long.parseLong(userAttr.get(ConstUtil.UserAttrId.LAST_ACTIV_TIME))));
             }

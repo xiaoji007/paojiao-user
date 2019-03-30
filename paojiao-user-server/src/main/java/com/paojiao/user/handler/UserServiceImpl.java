@@ -1,5 +1,6 @@
 package com.paojiao.user.handler;
 
+import com.fission.motan.spring.Rpc;
 import com.fission.next.common.bean.ClientContext;
 import com.fission.next.common.constant.RouteEventNames;
 import com.fission.next.common.constant.RouteFieldNames;
@@ -45,8 +46,10 @@ public class UserServiceImpl implements IUserService {
 
     @Inject
     private RabbitTemplate rabbit;
-    @Inject
+
+    @Rpc
     private ITokenService tokenService;
+
     @Inject
     private IUserCacheService userCacheService;
 

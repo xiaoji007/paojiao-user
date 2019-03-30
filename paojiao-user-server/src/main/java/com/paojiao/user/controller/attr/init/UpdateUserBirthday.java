@@ -27,11 +27,10 @@ public class UpdateUserBirthday extends UpdateUserAttr {
         Map<Short, Object> map = new HashMap<>();
         Date birthday = null;
         if (StringUtil.isBlank(data)) {
-//            throw new FissionCodeException(UserErrorCode.BIRTHDAY_ERROR);
+            throw new FissionCodeException(UserErrorCode.BIRTHDAY_ERROR);
         } else {
             try {
                 birthday = UpdateUserBirthday.FORMAT.parse(data);
-                return map;
             } catch (Exception e) {
                 throw new FissionException(e);
             }

@@ -30,7 +30,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @EnableScheduling
 @EnableRabbit
 @EnablePerfmon
-@EnableCaching
 @EnableAspectJAutoProxy
 @EnableJdbcTemplate(@Jdbc(db = ConstUtil.NameUtil.DB_USER))
 @EnableRedis(ConstUtil.NameUtil.REDIS_USER)
@@ -44,8 +43,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @EnableApolloConfig({"PIE.RabbitMQ", "PIE.Logging", "PIE.Transport", "PIE.Job", "PIE.Perfmon", "PIE.Mongodb", "PIE.Redis", "PIE.Database", "PIE.Fastdfs", "application"})
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, DataSourceAutoConfiguration.class})
 public class MainService {
-    private static final int MINUTE = 60;
-    private static final int HOUR = 60 * MINUTE;
 
     public static void main(String[] args) throws Exception {
         ApplicationMain.main(MainService.class, args);
