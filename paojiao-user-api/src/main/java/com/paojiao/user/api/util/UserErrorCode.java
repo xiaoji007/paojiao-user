@@ -86,30 +86,34 @@ public class UserErrorCode {
     public static final int DESC_LENGTH_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 13;
 
     /**
+     * 用户介绍为空
+     */
+    @ErrorAnnotation("用户介绍为空")
+    public static final int DESC_NULL_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 14;
+
+    /**
      * 昵称包含非法ASCII
      */
     @ErrorAnnotation("昵称包含非法ASCII")
-    public static final int NICK_NAME_ASCII_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 14;
-
-    /**
-     * 文件太大错误
-     */
-    @ErrorAnnotation("文件太大错误")
-    public static final int PIC_TOO_LONG_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 15;
-
-    /**
-     * 文件格式错误
-     */
-    @ErrorAnnotation("文件格式错误")
-    public static final int PIC_FILE_EXT_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 16;
-
+    public static final int NICK_NAME_ASCII_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 15;
 
     /**
      * 生日错误
      */
     @ErrorAnnotation("生日错误")
-    public static final int BIRTHDAY_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 17;
+    public static final int BIRTHDAY_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 16;
 
+    /**
+     * 文件太大错误
+     */
+    @ErrorAnnotation("文件太大错误")
+    public static final int PIC_TOO_LONG_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 17;
+
+    /**
+     * 文件格式错误
+     */
+    @ErrorAnnotation("文件格式错误")
+    public static final int PIC_FILE_EXT_ERROR = ErrorCode.PaoJiao.USER_SERVER_ERROR + 18;
 }
 
 

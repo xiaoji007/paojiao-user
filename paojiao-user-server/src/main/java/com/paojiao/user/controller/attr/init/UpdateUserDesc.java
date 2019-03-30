@@ -31,7 +31,7 @@ public class UpdateUserDesc extends UpdateUserAttr {
     @Override
     public Map<Short, Object> getUpdateUserAttr(int userId, String data) {
         if (StringUtil.isBlank(data)) {
-            data = "";
+            throw new FissionCodeException(UserErrorCode.DESC_NULL_ERROR);
         } else {
             String keyworld = KeyworldUtil.getKeyWorld(data, UpdateUserNickName.NICK_NAME_KEYWORLD_MAP);
             if (StringUtil.isNotBlank(keyworld)) {
